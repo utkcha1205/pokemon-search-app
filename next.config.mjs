@@ -1,4 +1,18 @@
 /** @type {import('next').NextConfig} */
+import withPWAInit from "@ducanh2912/next-pwa";
+
+const withPWA = withPWAInit({
+  dest: "public",
+  cacheOnFrontEndNav:true,
+  aggressiveFrontEndNavCaching:true,
+  reloadOnOnline:true,
+  swcMinify:true,
+  disable: false,
+  workboxOptions:{
+    disableDevLogs:true
+  }
+}); 
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
@@ -25,10 +39,11 @@ const nextConfig = {
     ],
   },
   experimental: {
+    middleware: true,
     fontLoaders: [
       { loader: "@next/font/google", options: { subsets: ["latin"] } },
     ],
   },
 };
 
-export default nextConfig;
+export default withPWA(nextConfig);
