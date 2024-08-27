@@ -5,6 +5,10 @@ import { Inter as FontSans } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 import { cn } from "@/lib/utils";
 import Head from "next/head";
+import NavBar from "@/components/NavBar";
+import SessionProvider from "@/utils/SessionProvider";
+import {getServerSession} from "next-auth";
+
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -21,11 +25,14 @@ export const viewport: Viewport = {
   themeColor: "#FFFFFF",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
+  const session = await getServerSession()
+  
   return (
     <html lang="en">
       <Head>
@@ -35,14 +42,19 @@ export default function RootLayout({
 
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
+          "bg-background font-sans antialiased",
           fontSans.variable,
         )}
       >
-        <header className="header">
+        {/* <header className="header">
           <h5>Pokemon Search App</h5>
-        </header>
-        {children}
+        </header> */}
+        <SessionProvider session={session}>
+          <div className="mx-auto max-w-5xl text2xl gap-2 mb-10">
+            <NavBar />
+            {children}
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );

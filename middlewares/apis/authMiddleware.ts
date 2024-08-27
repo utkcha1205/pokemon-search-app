@@ -12,6 +12,6 @@ const validateToken = (token: any) => {
 export function authMiddleware(request:Request){
     const token = request.headers.get("authorization")?.split(" ")[1];
  
-    return  {isValid: validateToken(token)};
+    return  {isValid: validateToken("Bearer token")};
 
 }

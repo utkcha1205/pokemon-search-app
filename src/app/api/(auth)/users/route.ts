@@ -1,7 +1,8 @@
 import connect from "@/lib/db";
-import User from "@/lib/modals/user";
+import User from "@/lib/models/user";
 import { Types } from "mongoose";
 import { NextResponse } from "next/server";
+import bcrypt from 'bcryptjs'
 
 const ObjectId = require("mongoose").Types.ObjectId;
 export const  GET = async() => {
@@ -20,11 +21,19 @@ export const  GET = async() => {
 
 export const POST = async(request:Request) => {
     try{
-        const body = await request.json();
+        const {email,password} = await request.json();
         await connect();
-        const newUsers = new User(body);
-        await newUsers.save();
-        return new NextResponse(JSON.stringify({message:"User Created", user:newUsers}), {status:201})
+        const existingUsers = await User.findOne({email})
+        if(existingUsers){
+            return new NextResponse(JSON.stringify({message:"Email already exists"}),{status:400})
+        }
+
+        const hasPassword = await bcrypt.hash(password,5)
+
+        const newUser = new User({email, password:hasPassword});
+        
+        await newUser.save();
+        return new NextResponse(JSON.stringify({message:"User Registered", user:newUser}), {status:201})
     }
     catch(error){
         return new NextResponse("Error: Creating " + error,{status:500})
@@ -35,6 +44,7 @@ export const PATCH = async(request:Request) => {
     try{
         const body = await request.json();
         const { userId, newUsername } = body;
+        
         await connect();
         if(!userId || !newUsername){
             return new NextResponse(

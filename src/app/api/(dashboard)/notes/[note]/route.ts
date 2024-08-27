@@ -1,6 +1,6 @@
 import connect from "@/lib/db";
-import Note from "@/lib/modals/notes";
-import User from "@/lib/modals/user";
+import Note from "@/lib/models/notes";
+import User from "@/lib/models/user";
 import { Types } from "mongoose";
 import { NextResponse } from "next/server";
 
